@@ -4,7 +4,10 @@ const express = require("express");
 const fs = require('fs');
 const app = express();
 
-var data = {vocab:[], groups:[]};
+var data = {
+    vocab: { words: [] },
+    groups: { groups: [] }
+};
 
 app.listen(3000, () => {
     startGoogle();
@@ -55,7 +58,7 @@ function loadVocabData(auth) {
                 const native2 = row[2];
                 const english = row[3];
                 const dataPart = { id: key, native1: native1, native2: native2, english: english };
-                data.vocab.push(dataPart);
+                data.vocab.words.push(dataPart);
                
             });
         } else {
@@ -77,7 +80,7 @@ function loadGroupData(auth) {
                 const key = row[0];
                 const cost = row[1];
                 const dataPart = { id: key, cost: cost };
-                data.groups.push(dataPart);
+                data.groups.groups.push(dataPart);
 
             });
         } else {
