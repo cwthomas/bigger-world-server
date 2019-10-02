@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/node_modules
+/obj
+/tmpnodejsnpm-cache
+/.vs
+/bin
+/token.json
+/credentials.json

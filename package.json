@@ -1,0 +1,21 @@
+{
+  "name": "nodejs-test",
+  "version": "0.0.0",
+  "description": "NodeJSTestApp",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${file}"
+    }
+  ],
+  "dependencies": {
+    "express": "^4.17.1",
+    "googleapis": "^39.2.0"
+  }
+}
