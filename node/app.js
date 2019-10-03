@@ -1,4 +1,4 @@
-const gAuthorize = require('./modules/google');
+const gAuthorize = require('../modules/google');
 const { google } = require('googleapis');
 const express = require("express");
 const fs = require('fs');
@@ -21,6 +21,8 @@ app.get("/vocab", (req, res, next) => {
 app.get("/group", (req, res, next) => {
     res.send(data.groups);
 });
+
+app.use(express.static('dist'))
 
 function startGoogle() {
     // Load client secrets from a local file.
