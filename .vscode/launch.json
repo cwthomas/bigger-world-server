@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch via Heroku",
+        
+         "runtimeExecutable": "heroku",
+            "cwd": "${workspaceFolder}",
+            "sourceMaps": true,
+            "runtimeArgs": [
+                "local",
+                "web",
+                "-f",
+                "${workspaceFolder}\\Procfile.test"
+            ],
+            "port": 9229
+        }
+    ]
+}

@@ -3,6 +3,8 @@ const { google } = require('googleapis');
 const express = require("express");
 const fs = require('fs');
 const app = express();
+const constants = require('./sheetsConstants');
+const {Vocab, VocabGroup} = require('./classes/classes');
 
 var data = {
     vocab: { words: [] },
@@ -10,8 +12,9 @@ var data = {
 };
 
 app.listen(process.env.PORT, () => {
-    startGoogle();
-  
+    const port = process.env.PORT;
+    console.log(`Express server listening on ${port}`);
+    loadFromGoogleSheets();
 });
 
 app.get("/vocab", (req, res, next) => {
@@ -22,9 +25,25 @@ app.get("/group", (req, res, next) => {
     res.send(data.groups);
 });
 
-app.use(express.static('dist'))
+// TODO : connect this with mongo
+app.get("/user/:username",(req,res,next)=>{
+ const username = req.params.username;
+  res.send({name:"Kanji Tattoo", coins:100});
+});
 
-function startGoogle() {
+app.post("/user/:username",(req,res,next)=>{
+    const username = req.params.username;
+    console.log(req.body.userdata);
+   
+   });
+app.put("/user/:username",(req,res,next)=>{
+    const username = req.params.username;
+    console.log(req.body.userdata);
+   });
+
+app.use(express.static('dist'));
+
+function loadFromGoogleSheets() {
     // Load client secrets from a local file.
     fs.readFile('credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
@@ -40,26 +59,27 @@ function loadData(auth) {
 }
 
 /**
- * Prints the names and majors of students in a sample spreadsheet:
- * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
+ * Loads data from the Vocabulary spreadsheet
+ * @see https://docs.google.com/spreadsheets/d/1SxG76uoRcCwDDMNWv42QXMsAeLcZbxuSXHsVP7GL3i0/edit
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
 function loadVocabData(auth) {
     const sheets = google.sheets({ version: 'v4', auth });
     sheets.spreadsheets.values.get({
-        spreadsheetId: '1SxG76uoRcCwDDMNWv42QXMsAeLcZbxuSXHsVP7GL3i0',
-        range: 'JP-Vocabulary!A2:E',
+        spreadsheetId: constants.SPREADSHEET_ID,
+        range: constants.VOCAB_RANGE,
     }, (err, res) => {
         if (err) return console.log('The API returned an error: ' + err);
         const rows = res.data.values;
         if (rows.length) {
-            // Print columns A and E, which correspond to indices 0 and 4.
+            // Print columns A and E, which correspond to indices 0 through 4.
             rows.map((row) => {
-                const key = row[0];
+                const id = row[0];
                 const native1 = row[1];
                 const native2 = row[2];
                 const english = row[3];
-                const dataPart = { id: key, native1: native1, native2: native2, english: english };
+                const group = row[4]; 
+                const dataPart = new Vocab (id, native1,native2,english, group );
                 data.vocab.words.push(dataPart);
                
             });
@@ -71,18 +91,18 @@ function loadVocabData(auth) {
 function loadGroupData(auth) {
     const sheets = google.sheets({ version: 'v4', auth });
     sheets.spreadsheets.values.get({
-        spreadsheetId: '1SxG76uoRcCwDDMNWv42QXMsAeLcZbxuSXHsVP7GL3i0',
-        range: 'JP-Groups!A2:B',
+        spreadsheetId: constants.SPREADSHEET_ID,
+        range: constants.GROUP_RANGE,
     }, (err, res) => {
         if (err) return console.log('The API returned an error: ' + err);
         const rows = res.data.values;
         if (rows.length) {
             // Print columns A and E, which correspond to indices 0 and 4.
             rows.map((row) => {
-                const key = row[0];
+                const id = row[0];
                 const cost = row[1];
-                const dataPart = { id: key, cost: cost };
-                data.groups.groups.push(dataPart);
+                const vocabGroupItem = new VocabGroup(id,cost);
+                data.groups.groups.push(vocabGroupItem);
 
             });
         } else {

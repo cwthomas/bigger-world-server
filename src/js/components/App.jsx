@@ -1,38 +1,45 @@
 import React, { Component } from "react";
+import {
+    Route,
+    NavLink,
+    HashRouter
+  } from "react-router-dom";
 import Groups from "./Groups.jsx";
 import VocabList from "./VocabList.jsx";
+import VocabChallenge from "./VocabChallenge.jsx";
+
 class App extends Component {
-    constructor() {
-        super();
 
-        this.state = { groups: null, vocab: null };
-    }
-
-    componentDidMount() {
-        fetch('/group')
-            .then(response => response.json())
-            .then(data => this.setState({ groups:data.groups }));
-
-        fetch('/vocab')
-            .then(response => response.json())
-            .then(data => this.setState({ vocab: data.words }));
-    }
-   
 
     render() {
-      
-        return (
-            <div className="game">
-                <div className="game-board">
-                    <Groups value={this.state.groups} />
+       return(
+            <div className="container">
+                <div className="row">
+                    <div className="col-sm">
+                        Coins { this.props.user.coins}
+                    </div>
+                    <div className="col-sm">
+                        Inventory
+                    </div>
+                    <div className="col-sm">                        
+                        {this.props.user.name}
+                    </div>
                 </div>
-                <div className="game-board">
-                    <VocabList value={this.state.vocab} />
+
+                <div className="row">
+                    
+                    <div className="col-sm">
+                        <VocabList vocab={this.props.vocab} />
+                    </div>
+                </div>
+              
+                <div className="container">
+                    <button>Drill</button>
                 </div>
             </div>
         );
 
     }
 }
-export default App;
 
+export default App;

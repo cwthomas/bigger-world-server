@@ -15,14 +15,17 @@
         }
     ],
     "scripts": {
-        "start": "node node/app.js",
+        "start": "heroku local",
         "build": "webpack --mode development"
     },
     "dependencies": {
         "express": "^4.17.1",
         "googleapis": "^39.2.0",
         "react": "^16.10.1",
-        "react-dom": "^16.10.1"
+        "react-dom": "^16.10.1",
+        "react-redux": "^7.1.1",
+        "react-router-dom": "^5.1.2",
+        "redux": "^4.0.4"
     },
     "devDependencies": {
         "@babel/core": "^7.6.2",
