@@ -28,7 +28,7 @@ app.get("/group", (req, res, next) => {
 // TODO : connect this with mongo
 app.get("/user/:username",(req,res,next)=>{
  const username = req.params.username;
-  res.send({name:"Kanji Tattoo", coins:100});
+  res.send({name:"Kanji Tattoo", coins:100, xp:10});
 });
 
 app.post("/user/:username",(req,res,next)=>{
@@ -41,7 +41,8 @@ app.put("/user/:username",(req,res,next)=>{
     console.log(req.body.userdata);
    });
 
-app.use(express.static('dist'));
+app.use("/",express.static('dist'));
+
 
 function loadFromGoogleSheets() {
     // Load client secrets from a local file.

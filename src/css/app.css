@@ -13,8 +13,13 @@ ol, ul {
     display: table;
 }
 
-.status {
-    margin-bottom: 10px;
+.btn{
+    margin:5px;
+}
+
+.bigrow{
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
 }
 
 .square {
