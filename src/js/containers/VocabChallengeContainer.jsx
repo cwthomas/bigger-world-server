@@ -1,13 +1,13 @@
 import React from "react";
 import { connect } from 'react-redux';
-
 import VocabChallenge from "../components/VocabChallenge.jsx";
+import store from "../store";
 
 
 class VocabChallengeContainer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { quizWords: [], targetWord: {id:"",native1:"", native2:"", english:""} };
+    this.state = { challengeStarted: false, quizWords: [], targetWord: { id: "", native1: "", native2: "", english: "" } };
   }
   // choose word from vocab
   // 
@@ -48,25 +48,60 @@ class VocabChallengeContainer extends React.Component {
   }
 
 
+
   nextQuestion() {
     const vocab = this.pickRandom();
     const vocabDistractors = this.pickDistractors(4);
-    this.state.targetWord = vocab;
-    this.state.quizWords = this.shuffle([vocab, ...vocabDistractors]);
+    this.setState({ challengeStarted: true, targetWord: vocab, quizWords: this.shuffle([vocab, ...vocabDistractors]) })
+
   }
 
   render() {
-    if (this.props.vocab.length==0){
+    if (this.props.vocab.length == 0) {
       return (<div></div>);
     }
-    this.nextQuestion();
-   
 
-    return (
-      <div>   
-        <VocabChallenge target={this.state.targetWord} distractors={this.state.quizWords}  />
-      </div>
-    );
+    if (this.state.challengeStarted) {
+      return (
+        <div>
+          <VocabChallenge target={this.state.targetWord}
+            distractors={this.state.quizWords}
+            correct={() => {
+              store.dispatch({
+                type: 'USER_REWARD',
+                coins: 10,
+                xp: 10
+              });
+              this.nextQuestion();
+            }}
+
+            wrong={() =>
+              this.nextQuestion()
+            }
+
+          />
+        </div>
+      );
+    }
+    else {
+      return (<div>
+        <div className="container" >
+
+          <div className="row">
+            <div className="col text-center">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  this.nextQuestion();
+
+                }}>
+                Start Challenge
+               </button>
+            </div>
+          </div>
+        </div>
+      </div>);
+    }
   }
 }
 

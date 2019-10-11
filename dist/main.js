@@ -40187,8 +40187,7 @@ function (_React$Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../store */ "./src/js/store.js");
-/* harmony import */ var reactjs_popup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! reactjs-popup */ "./node_modules/reactjs-popup/reactjs-popup.es.js");
+/* harmony import */ var reactjs_popup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! reactjs-popup */ "./node_modules/reactjs-popup/reactjs-popup.es.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -40206,7 +40205,6 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
 
 
 
@@ -40251,18 +40249,10 @@ function (_React$Component) {
     value: function clickAnswer(isRight) {
       if (isRight) {
         this.openModal("Correct!  You earned +10 coins and +10 xp!");
-        _store__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch({
-          type: 'USER_REWARD',
-          coins: 10,
-          xp: 10
-        });
+        this.props.correct();
       } else {
         this.openModal("Wrong!  You get nothing.");
-        _store__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch({
-          type: 'USER_REWARD',
-          coins: 0,
-          xp: 0
-        });
+        this.props.wrong();
       }
     }
   }, {
@@ -40270,7 +40260,7 @@ function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactjs_popup__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactjs_popup__WEBPACK_IMPORTED_MODULE_1__["default"], {
         open: this.state.open,
         closeOnDocumentClick: true,
         onClose: this.closeModal,
@@ -40504,6 +40494,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 /* harmony import */ var _components_VocabChallenge_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/VocabChallenge.jsx */ "./src/js/components/VocabChallenge.jsx");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../store */ "./src/js/store.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -40534,6 +40525,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var VocabChallengeContainer =
 /*#__PURE__*/
 function (_React$Component) {
@@ -40546,6 +40538,7 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(VocabChallengeContainer).call(this, props));
     _this.state = {
+      challengeStarted: false,
       quizWords: [],
       targetWord: {
         id: "",
@@ -40603,21 +40596,52 @@ function (_React$Component) {
     value: function nextQuestion() {
       var vocab = this.pickRandom();
       var vocabDistractors = this.pickDistractors(4);
-      this.state.targetWord = vocab;
-      this.state.quizWords = this.shuffle([vocab].concat(_toConsumableArray(vocabDistractors)));
+      this.setState({
+        challengeStarted: true,
+        targetWord: vocab,
+        quizWords: this.shuffle([vocab].concat(_toConsumableArray(vocabDistractors)))
+      });
     }
   }, {
     key: "render",
     value: function render() {
+      var _this2 = this;
+
       if (this.props.vocab.length == 0) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null);
       }
 
-      this.nextQuestion();
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_VocabChallenge_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        target: this.state.targetWord,
-        distractors: this.state.quizWords
-      }));
+      if (this.state.challengeStarted) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_VocabChallenge_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {
+          target: this.state.targetWord,
+          distractors: this.state.quizWords,
+          correct: function correct() {
+            _store__WEBPACK_IMPORTED_MODULE_3__["default"].dispatch({
+              type: 'USER_REWARD',
+              coins: 10,
+              xp: 10
+            });
+
+            _this2.nextQuestion();
+          },
+          wrong: function wrong() {
+            return _this2.nextQuestion();
+          }
+        }));
+      } else {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "container"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "row"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "col text-center"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-primary",
+          onClick: function onClick() {
+            _this2.nextQuestion();
+          }
+        }, "Start Challenge")))));
+      }
     }
   }]);
 

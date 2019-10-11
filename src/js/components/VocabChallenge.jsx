@@ -1,5 +1,5 @@
 import React from "react";
-import store from "../store";
+
 import Popup from "reactjs-popup";
 
 class VocabChallenge extends React.Component {
@@ -22,19 +22,11 @@ class VocabChallenge extends React.Component {
     
         if (isRight) {
             this.openModal("Correct!  You earned +10 coins and +10 xp!");
-            store.dispatch({
-                type: 'USER_REWARD',
-                coins: 10,
-                xp: 10
-              });
+           this.props.correct();
 
         } else {
             this.openModal("Wrong!  You get nothing.");
-            store.dispatch({
-                type: 'USER_REWARD',
-                coins: 0,
-                xp: 0
-              });
+            this.props.wrong();
 
         }
 
