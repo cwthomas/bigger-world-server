@@ -5,13 +5,18 @@ const fs = require('fs');
 const app = express();
 const constants = require('./sheetsConstants');
 const {Vocab, VocabGroup} = require('./classes/classes');
+var data = {};
 
-var data = {
-    vocab: { words: [] },
-    groups: { groups: [] }
-};
+
+function initData(){
+   data.vocab = { words: [] };
+   data.groups = { groups: [] }
+    
+}
 
 app.listen(process.env.PORT, () => {
+
+    initData();
     const port = process.env.PORT;
     console.log(`Express server listening on ${port}`);
     loadFromGoogleSheets();
@@ -23,6 +28,12 @@ app.get("/vocab", (req, res, next) => {
 
 app.get("/group", (req, res, next) => {
     res.send(data.groups);
+});
+
+app.get("/refresh", (req, res, next) => {
+    initData();
+    loadFromGoogleSheets();
+    res.send({ status:'OK'});
 });
 
 // TODO : connect this with mongo
