@@ -66,6 +66,7 @@ function loadFromGoogleSheets() {
 }
 
 function loadData(auth) {
+    console.log("after auth");
     loadGroupData(auth);
     loadVocabData(auth);
 }
