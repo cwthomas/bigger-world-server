@@ -21,6 +21,7 @@
     "dependencies": {
         "express": "^4.17.1",
         "googleapis": "^39.2.0",
+        "mongodb": "^3.3.5",
         "react": "^16.10.1",
         "react-dom": "^16.10.1",
         "react-redux": "^7.1.1",

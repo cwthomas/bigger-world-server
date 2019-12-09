@@ -1,4 +1,6 @@
 const gAuthorize = require('../modules/google');
+const mongo = require('mongodb');
+
 const { google } = require('googleapis');
 const express = require("express");
 const fs = require('fs');
@@ -6,6 +8,11 @@ const app = express();
 const constants = require('./sheetsConstants');
 const {Vocab, VocabGroup} = require('./classes/classes');
 var data = {};
+
+
+const mongoDBName = "heroku_qb42nzlx";
+var MongoClient = mongo.MongoClient;
+var mongoUrl = "mongodb://biggerworldapp:purple-ocean-19@ds333098.mlab.com:33098/heroku_qb42nzlx";
 
 
 function initData(){
@@ -39,7 +46,20 @@ app.get("/refresh", (req, res, next) => {
 // TODO : connect this with mongo
 app.get("/user/:username",(req,res,next)=>{
  const username = req.params.username;
-  res.send({name:"Kanji Tattoo", coins:100, xp:10});
+  
+  
+  MongoClient.connect(mongoUrl, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db(mongoDBName);
+    var query = { username: username };
+    dbo.collection("userdata").find(query).toArray((err,result)=>{
+        if (err) throw err;
+        res.send(result[0]);
+        db.close();
+    });
+
+  });
+
 });
 
 app.post("/user/:username",(req,res,next)=>{
