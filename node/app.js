@@ -7,6 +7,10 @@ const fs = require('fs');
 const app = express();
 const constants = require('./sheetsConstants');
 const {Vocab, VocabGroup} = require('./classes/classes');
+var bodyParser = require('body-parser');
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
 var data = {};
 
 
@@ -62,15 +66,42 @@ app.get("/user/:username",(req,res,next)=>{
 
 });
 
-app.post("/user/:username",(req,res,next)=>{
+app.post("/user/:username",(req,res, next)=>{
+    try{
     const username = req.params.username;
-    console.log(req.body.userdata);
+    const user = req.body;
+    MongoClient.connect(mongoUrl, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db(mongoDBName);
+        dbo.collection("userdata").insertOne(user, (err,result)=>{
+            if (err){ next(err)}
+            else
+            {
+            res.send('{"status":"OK"}');
+            }
+            db.close();
+        });
    
    });
+}catch(ex){
+    console.log(ex);
+}
+});
+
+
 app.put("/user/:username",(req,res,next)=>{
     const username = req.params.username;
-    console.log(req.body.userdata);
+     MongoClient.connect(mongoUrl, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db(mongoDBName);
+        var query = { username: username };
+        dbo.collection("userdata").updateOne(query, user, (err,result)=>{
+            if (err) throw err;
+            res.send('{"status":"OK"}');
+            db.close();
+        });
    });
+});
 
 app.use("/",express.static('dist'));
 
@@ -143,3 +174,4 @@ function loadGroupData(auth) {
         }
     });
 }
+
