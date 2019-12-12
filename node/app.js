@@ -98,7 +98,8 @@ app.put("/user/:username",(req,res,next)=>{
         var user = req.body;
         dbo.collection("userdata").updateOne(query,  {$set: { coin: user.coin, 
                                                               xp: user.xp, 
-                                                              level: user.level }}, (err,result)=>{
+                                                              level: user.level,
+                                                              ownedWords: user.ownedWords }}, (err,result)=>{
             if (err) throw err;
             res.send('{"status":"OK"}');
             db.close();
