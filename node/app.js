@@ -20,7 +20,10 @@ var mongoUrl = "mongodb://biggerworldapp:purple-ocean-19@ds333098.mlab.com:33098
 
 
 function initData(){
-   data.vocab = { words: [] };
+   data.vocab = { items: [] };
+   data.particles = { items: [] };
+   data.grammar = { items: [] };
+   data.phrases = { items: [] };
    data.groups = { groups: [] }
     
 }
@@ -36,6 +39,19 @@ app.listen(process.env.PORT, () => {
 app.get("/vocab", (req, res, next) => {
     res.send(data.vocab);
 });
+
+app.get("/particles", (req, res, next) => {
+    res.send(data.particles);
+});
+
+app.get("/grammar", (req, res, next) => {
+    res.send(data.vocab);
+});
+
+app.get("/phrases", (req, res, next) => {
+    res.send(data.vocab);
+});
+
 
 app.get("/group", (req, res, next) => {
     res.send(data.groups);
@@ -99,7 +115,8 @@ app.put("/user/:username",(req,res,next)=>{
         dbo.collection("userdata").updateOne(query,  {$set: { coin: user.coin, 
                                                               xp: user.xp, 
                                                               level: user.level,
-                                                              ownedWords: user.ownedWords }}, (err,result)=>{
+                                                              ownedWords: user.ownedWords,
+                                                              ownedGroups: user.ownedGroups}}, (err,result)=>{
             if (err) throw err;
             res.send('{"status":"OK"}');
             db.close();
@@ -124,6 +141,7 @@ function loadData(auth) {
     console.log("after auth");
     loadGroupData(auth);
     loadVocabData(auth);
+    loadParticleData(auth);
 }
 
 /**
@@ -148,7 +166,7 @@ function loadVocabData(auth) {
                 const english = row[3];
                 const group = row[4]; 
                 const dataPart = new Vocab (id, native1,native2,english, group );
-                data.vocab.words.push(dataPart);
+                data.vocab.items.push(dataPart);
                
             });
         } else {
@@ -156,6 +174,70 @@ function loadVocabData(auth) {
         }
     });
 }
+
+/**
+ * Loads data from the Vocabulary spreadsheet
+ * @see https://docs.google.com/spreadsheets/d/1SxG76uoRcCwDDMNWv42QXMsAeLcZbxuSXHsVP7GL3i0/edit
+ * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
+ */
+function loadParticleData(auth) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    sheets.spreadsheets.values.get({
+        spreadsheetId: constants.SPREADSHEET_ID,
+        range: constants.PARTICLE_RANGE,
+    }, (err, res) => {
+        if (err) return console.log('The API returned an error: ' + err);
+        const rows = res.data.values;
+        if (rows.length) {
+            // Print columns A and E, which correspond to indices 0 through 4.
+            rows.map((row) => {
+                const id = row[0];
+                const native1 = row[1];
+                const native2 = row[2];
+                const english = row[3];
+                const group = row[4]; 
+                const dataPart = new Vocab (id, native1,native2,english, group );
+                data.particles.items.push(dataPart);
+               
+            });
+        } else {
+            console.log('No data found.');
+        }
+    });
+}
+
+/**
+ * Loads data from the Vocabulary spreadsheet
+ * @see https://docs.google.com/spreadsheets/d/1SxG76uoRcCwDDMNWv42QXMsAeLcZbxuSXHsVP7GL3i0/edit
+ * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
+ */
+function loadGrammarData(auth) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    sheets.spreadsheets.values.get({
+        spreadsheetId: constants.SPREADSHEET_ID,
+        range: constants.GRAMMAR_RANGE,
+    }, (err, res) => {
+        if (err) return console.log('The API returned an error: ' + err);
+        const rows = res.data.values;
+        if (rows.length) {
+            // Print columns A and E, which correspond to indices 0 through 4.
+            rows.map((row) => {
+                const id = row[0];
+                const native1 = row[1];
+                const native2 = row[2];
+                const english = row[3];
+                const group = row[4]; 
+                const dataPart = new Vocab (id, native1,native2,english, group );
+                data.grammar.items.push(dataPart);
+               
+            });
+        } else {
+            console.log('No data found.');
+        }
+    });
+}
+
+
 function loadGroupData(auth) {
     const sheets = google.sheets({ version: 'v4', auth });
     sheets.spreadsheets.values.get({
