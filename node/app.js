@@ -164,8 +164,8 @@ function loadVocabData(auth) {
                 const native1 = row[1];
                 const native2 = row[2];
                 const english = row[3];
-                const group = row[4]; 
-                const dataPart = new Vocab (id, native1,native2,english, group );
+                const pos = row[4]; 
+                const dataPart = new Vocab (id, native1,native2,english, pos );
                 data.vocab.items.push(dataPart);
                
             });
