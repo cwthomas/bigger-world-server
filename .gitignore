@@ -7,4 +7,5 @@
 /tmpnodejsnpm-cache
 /.vs
 /bin
-
+/node_app/dist
+/dist
