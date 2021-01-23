@@ -1,20 +1,30 @@
 export class Vocab  {
 
     public id:string;
+    public group:string;
     public native1:string;
     public native2:string;
     public english:string;
     public pos:string;
+    public romaji:string;
 
-   constructor(id:string,native1:string,native2:string,english:string ,pos:string){
+   constructor(id:string,group: string, native1:string,native2:string,english:string ,pos:string, romaji:string){
        this.id = id;
+       this.group = group;
        this.native1 = native1;
        this.native2 = native2;
        this.english = english;
        this.pos = pos;
+       this.romaji = romaji;
    } 
 }
 
+export interface ILangData {
+    vocab: { items: Vocab[] },
+    grammar: { items: [] },
+    phrases: { items: [] },
+    chests: { items: [] }
+}
 
 export class Grammar {
     public id:string;

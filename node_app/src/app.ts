@@ -1,7 +1,7 @@
 import express = require('express');
 import mongo = require('mongodb');
 import fs = require('fs');
-import * as fromLoader from './modules/loader';
+import * as fromLoader from './modules/sheetLoader';
 import { DataStore } from './model/classes';
 
 const app = express();
@@ -11,10 +11,14 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 let data: DataStore;
 
-const mongoDBName = "heroku_qb42nzlx";
+const mongoDBName = "bigger-world-db";
+
+// Just for demo, no big secrets here.
+//56XCwNpxcjdSG2E
+//demouser
 const MongoClient = mongo.MongoClient;
-const mongoUrl = "mongodb://biggerworldapp:purple-ocean-19@ds333098.mlab.com:33098/heroku_qb42nzlx";
-const GAME_PATH = "../BiggerWorld/Assets/PurpleOcean/Resources";
+const mongoUrl = "mongodb+srv://demouser:56XCwNpxcjdSG2E@cluster0.anvq4.mongodb.net/<dbname>?retryWrites=true&w=majority";
+const GAME_PATH = "../biggerworld-master/Assets/PurpleOcean/Resources";
 
 for (let j = 0; j < process.argv.length; j++) {
     console.log(j + ' -> ' + (process.argv[j]));
@@ -40,10 +44,10 @@ async function init() {
         const port = process.env.PORT;
         console.log(`Express server listening on ${port}`);
     });
-    
+
 }
 
-init() ;
+init();
 
 
 function exportToFiles(data: DataStore) {
@@ -70,41 +74,30 @@ app.get("/phrases", (req, res, next) => {
     res.send(data.phrases);
 });
 
-
-// app.get("/stories", (req, res, next) => {
-//     res.send(data.stories);
-// });
-
 app.get("/refresh", (req, res, next) => {
     initData();
     fromLoader.loadFromGoogleSheets(data);
     res.send({ status: 'OK' });
 });
 
-// TODO : connect this with mongo
 app.get("/user/:username", (req, res, next) => {
     const username = req.params.username;
-
-
-    MongoClient.connect(mongoUrl, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db(mongoDBName);
-        var query = { username: username };
-        dbo.collection("userdata").find(query).toArray((err, result) => {
+    var query = { username: username };
+    const client = new MongoClient(mongoUrl, { useNewUrlParser: true });
+    client.connect(err => {
+        const collection = client.db(mongoDBName).collection("userdata").find(query).toArray((err, result) => {
             if (err) throw err;
             res.send(result[0]);
-            db.close();
+            client.close();
         });
-
     });
-
 });
 
 app.post("/user/:username", (req, res, next) => {
     try {
         const username = req.params.username;
         const user = req.body;
-        MongoClient.connect(mongoUrl, function (err, db) {
+        MongoClient.connect(mongoUrl, (err, db) => {
             if (err) throw err;
             var dbo = db.db(mongoDBName);
             dbo.collection("userdata").insertOne(user, (err, result) => {
@@ -126,7 +119,7 @@ app.post("/user/:username", (req, res, next) => {
 
 app.put("/user/:username", (req, res, next) => {
     const username = req.params.username;
-    MongoClient.connect(mongoUrl, function (err, db) {
+    MongoClient.connect(mongoUrl, (err, db) => {
         if (err) throw err;
         var dbo = db.db(mongoDBName);
         var query = { username: username };
@@ -148,5 +141,3 @@ app.put("/user/:username", (req, res, next) => {
 });
 
 app.use("/", express.static('dist'));
-
-

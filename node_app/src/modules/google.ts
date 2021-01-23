@@ -3,6 +3,7 @@ import fs from 'fs';
 import readline from 'readline';
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
+import textToSpeech from '@google-cloud/text-to-speech';
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
@@ -18,10 +19,10 @@ export async function getSheetsObj(){
     return google.sheets({version: "v4", auth});
 }
 
-export async function getTextToSpeech(){
+export async function getTextToSpeech() {
     const cred = JSON.parse(fs.readFileSync(CRED_PATH, "utf8"));
     const auth = await authorize(cred);
-    return google.texttospeech({version:"v1beta1"});
+    return new textToSpeech.TextToSpeechClient();
 }
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
